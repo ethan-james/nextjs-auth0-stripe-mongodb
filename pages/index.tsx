@@ -16,9 +16,6 @@ const Home: NextPage = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
-
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +49,9 @@ const Home: NextPage = () => {
       }
     });
   }, [stripe]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
