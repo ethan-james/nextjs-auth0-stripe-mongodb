@@ -62,9 +62,13 @@ const Home: NextPage = () => {
 
     setLoading(true);
 
+    const return_url = window.location.hostname === "localhost" ?
+      `http://${window.location.hostname}:${window.location.port}` :
+      `https://${window.location.hostname}`;
+
     const { error } = await stripe.confirmPayment({
       elements,
-      confirmParams: { return_url: "http://localhost:3000" },
+      confirmParams: { return_url },
     });
 
     if (error.type === "card_error" || error.type === "validation_error") {
