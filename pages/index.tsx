@@ -1,4 +1,4 @@
-import { FormEvent, FormEventHandler, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -9,6 +9,7 @@ import {
   useElements
 } from "@stripe/react-stripe-js";
 import { PaymentIntent } from "@stripe/stripe-js/types";
+import { Button } from "@mui/material"
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
@@ -101,11 +102,11 @@ const Home: NextPage = () => {
         <div className={styles.grid}>
           <form id="payment-form" onSubmit={handleSubmit}>
             <PaymentElement id="payment-element" />
-            <button disabled={isLoading || !stripe || !elements} id="submit">
+            <Button disabled={isLoading || !stripe || !elements} className="btn" variant="contained">
               <span id="button-text">
                 {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
               </span>
-            </button>
+            </Button>
             {/* Show any error or success messages */}
             {message && <div id="payment-message">{message}</div>}
           </form>
