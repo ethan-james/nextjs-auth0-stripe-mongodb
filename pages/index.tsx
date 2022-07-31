@@ -1,28 +1,32 @@
 import { FormEvent, useEffect, useState } from "react";
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import { getSession, useUser } from '@auth0/nextjs-auth0';
+import type { NextPage } from "next";
+import Head from "next/head";
+import { getSession, useUser } from "@auth0/nextjs-auth0";
 import {
   PaymentElement,
   useStripe,
-  useElements
+  useElements,
 } from "@stripe/react-stripe-js";
-import { PaymentIntent } from "@stripe/stripe-js/types";
-import { Button } from "@mui/material"
-import { PrismaClient } from '@prisma/client'
-import type { NextApiRequest, NextApiResponse } from 'next'
-import styles from '../styles/Home.module.css'
+import { Button } from "@mui/material";
+import { PrismaClient } from "@prisma/client";
+import type { NextApiRequest, NextApiResponse } from "next";
+import styles from "../styles/Home.module.css";
 
-export async function getServerSideProps({ req, res }: { req: NextApiRequest, res: NextApiResponse }) {
-  const prisma = new PrismaClient()
+export async function getServerSideProps({
+  req,
+  res,
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}) {
+  const prisma = new PrismaClient();
   const session = getSession(req, res);
   const email = session?.user.email || "";
   const hectares = await prisma.hectare.findFirst({ where: { email } });
 
   return {
-    props : { hectares }
-  }
+    props: { hectares },
+  };
 }
 
 const Home: NextPage = (props) => {
@@ -76,9 +80,10 @@ const Home: NextPage = (props) => {
 
     setLoading(true);
 
-    const return_url = window.location.hostname === "localhost" ?
-      `http://${window.location.hostname}:${window.location.port}/api/payment` :
-      `https://${window.location.hostname}/api/payment`;
+    const return_url =
+      window.location.hostname === "localhost"
+        ? `http://${window.location.hostname}:${window.location.port}/api/payment`
+        : `https://${window.location.hostname}/api/payment`;
 
     const data = await stripe.confirmPayment({
       elements,
@@ -109,9 +114,18 @@ const Home: NextPage = (props) => {
         <div className={styles.grid}>
           <form id="payment-form" onSubmit={handleSubmit}>
             <PaymentElement id="payment-element" />
-            <Button disabled={isLoading || !stripe || !elements} className="btn" type="submit" variant="contained">
+            <Button
+              disabled={isLoading || !stripe || !elements}
+              className="btn"
+              type="submit"
+              variant="contained"
+            >
               <span id="button-text">
-                {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+                {isLoading ? (
+                  <div className="spinner" id="spinner"></div>
+                ) : (
+                  "Pay now"
+                )}
               </span>
             </Button>
             {/* Show any error or success messages */}
@@ -120,15 +134,16 @@ const Home: NextPage = (props) => {
         </div>
         <div>
           <p>
-          {user ?
-            <a href="/api/auth/logout">Logout</a> :
-            <a href="/api/auth/login">Login</a>
-          }
+            {user ? (
+              <a href="/api/auth/logout">Logout</a>
+            ) : (
+              <a href="/api/auth/login">Login</a>
+            )}
           </p>
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
