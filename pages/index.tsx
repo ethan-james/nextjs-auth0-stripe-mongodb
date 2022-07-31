@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useUser } from '@auth0/nextjs-auth0';
+import { getSession, useUser } from '@auth0/nextjs-auth0';
 import {
   PaymentElement,
   useStripe,
@@ -10,9 +10,22 @@ import {
 } from "@stripe/react-stripe-js";
 import { PaymentIntent } from "@stripe/stripe-js/types";
 import { Button } from "@mui/material"
+import { PrismaClient } from '@prisma/client'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+export async function getServerSideProps({ req, res }: { req: NextApiRequest, res: NextApiResponse }) {
+  const prisma = new PrismaClient()
+  const session = getSession(req, res);
+  const email = session?.user.email || "";
+  const hectares = await prisma.hectare.findFirst({ where: { email } });
+
+  return {
+    props : { hectares }
+  }
+}
+
+const Home: NextPage = (props) => {
   const { user, error, isLoading } = useUser();
   const stripe = useStripe();
   const elements = useElements();
