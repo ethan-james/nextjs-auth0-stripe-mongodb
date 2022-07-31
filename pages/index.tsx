@@ -77,13 +77,16 @@ const Home: NextPage = (props) => {
     setLoading(true);
 
     const return_url = window.location.hostname === "localhost" ?
-      `http://${window.location.hostname}:${window.location.port}` :
-      `https://${window.location.hostname}`;
+      `http://${window.location.hostname}:${window.location.port}/api/payment` :
+      `https://${window.location.hostname}/api/payment`;
 
-    const { error } = await stripe.confirmPayment({
+    const data = await stripe.confirmPayment({
       elements,
       confirmParams: { return_url },
     });
+
+    const { error } = data;
+    debugger;
 
     if (error.type === "card_error" || error.type === "validation_error") {
       setMessage(error?.message || "");
@@ -103,19 +106,10 @@ const Home: NextPage = (props) => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
         <div className={styles.grid}>
           <form id="payment-form" onSubmit={handleSubmit}>
             <PaymentElement id="payment-element" />
-            <Button disabled={isLoading || !stripe || !elements} className="btn" variant="contained">
+            <Button disabled={isLoading || !stripe || !elements} className="btn" type="submit" variant="contained">
               <span id="button-text">
                 {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
               </span>
@@ -133,19 +127,6 @@ const Home: NextPage = (props) => {
           </p>
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
