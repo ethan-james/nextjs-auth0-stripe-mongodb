@@ -10,7 +10,13 @@ import {
 import { Button } from "@mui/material";
 import { PrismaClient } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import styled from "@emotion/styled";
 import styles from "../styles/Home.module.css";
+
+const PaymentButton = styled(Button)`
+  margin-top: 1.5rem;
+  width: 100%;
+`;
 
 export async function getServerSideProps({
   req,
@@ -114,7 +120,7 @@ const Home: NextPage = (props) => {
         <div className={styles.grid}>
           <form id="payment-form" onSubmit={handleSubmit}>
             <PaymentElement id="payment-element" />
-            <Button
+            <PaymentButton
               disabled={isLoading || !stripe || !elements}
               className="btn"
               type="submit"
@@ -127,7 +133,7 @@ const Home: NextPage = (props) => {
                   "Pay now"
                 )}
               </span>
-            </Button>
+            </PaymentButton>
             {/* Show any error or success messages */}
             {message && <div id="payment-message">{message}</div>}
           </form>
